@@ -1,18 +1,16 @@
 import java.util.*;
 
 public class State {
+    //State is a set of production rule
     StateManager grammar;
-    private Set<ProdRule> items;
-    public ProdRule reducingPR;
+    private final Set<ProdRule> items;
+    private ProdRule reducingPR;
     boolean acceptState;
-    public Symbol reducingSymbol;
     Boolean isReducingState;
-    Symbol label;
 
-    public State(StateManager grammar, Set<ProdRule> items, Symbol label) {
+    public State(StateManager grammar, Set<ProdRule> items) {
         this.grammar = grammar;
         this.items = items;
-        this.label = label;
         isReducingState = isReducingState();
 
         this.acceptState = ((isReducingState)
@@ -20,25 +18,15 @@ public class State {
                 || reducingPR.lastSymbol().equals("$")));
     }
 
-    public State(StateManager grammar, Set<ProdRule> items){
-        this(grammar, items, null);
-    }
-
-    public Action action(Token a) {
-        if (isReducingState())
-            return null;
-        else
-            return null;
-    }
-
+    //Returns true if the current state is a reducing state, i.e. the sequence of tokens matches the handle
     public boolean isReducingState(){
         if (isReducingState == null){
             boolean cases = false;
             for (ProdRule x : items) {
-                cases = cases || x.dotLast();
+                cases = x.dotLast();
                 if (cases) {
                     reducingPR = x;
-                    reducingSymbol = reducingPR.lastSymbol();
+                    Symbol reducingSymbol = reducingPR.lastSymbol();
                     break;
                 }
             }
@@ -49,6 +37,7 @@ public class State {
             return isReducingState;
     }
 
+    //Give a gotoTable and the stack of parsing
     public void reduce(BiMap<State, String, State> gotoTable, Stack<ParseTree> parseForest) {
         if (isReducingState){
             List<Symbol> handle = reducingPR.handle;
@@ -56,11 +45,13 @@ public class State {
             Symbol head = reducingPR.left;
             List<ParseTree> children = new LinkedList<>();
 
+            //pop off the n items from the stack
             for (int i = 0; i < n; i++){
                 ParseTree tree = parseForest.pop();
                 children.add(0, tree);
             }
 
+            //add the reduced state and symbol
             State nextState = gotoTable.get(parseForest.peek().state, head.symbol);
             ParseTree pt = ParseTree.makeParent(nextState, head, children);
             parseForest.add(pt);
@@ -68,7 +59,7 @@ public class State {
         }
     }
 
-
+    //Return the next state if this state is given input a
     public State GOTO(String a) {
         Set<ProdRule> out = new HashSet<>();
         for (ProdRule pr : items) {
@@ -78,14 +69,6 @@ public class State {
         }
         out.addAll(grammar.closure(out));
         return new State(grammar, out);
-    }
-
-    public State GOTO(Symbol a){
-        return GOTO(a.symbol);
-    }
-
-    public Set<ProdRule> getItems() {
-        return this.items;
     }
 
     @Override

@@ -18,7 +18,6 @@ public class Lexer {
         keywords.put("cos", TokenType.COS);
     }
 
-
     private boolean isAtEnd(){
         //if program is at the end
         return current >= source.length();

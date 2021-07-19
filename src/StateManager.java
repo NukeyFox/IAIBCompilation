@@ -4,10 +4,6 @@ import static java.util.stream.Collectors.toCollection;
 
 public class StateManager {
 
-    @Override
-    public String toString() {
-        return grammar.toString();
-    }
 
     public State startState;
     ProdRule startProdRule;
@@ -27,20 +23,21 @@ public class StateManager {
 
     }
 
-    public Set<ProdRule> createGrammar(String... productionRules){
+    //Given a string specifying the grammar in BNF and produces the set of production rules (i.e. th grammar)
+    public void createGrammar(String... productionRules){
         symbols = new HashSet<>();
         grammar = new HashSet<>();
         this.nonTerminalSymbols = new HashSet<>();
 
         for (String s : productionRules) {
             int a = 0;
-            String symbol = "";
+            StringBuilder symbol = new StringBuilder();
             while (a < s.length() && s.charAt(a) != ' '){
-                symbol += s.charAt(a);
+                symbol.append(s.charAt(a));
                 a++;
             }
-            symbols.add(symbol);
-            nonTerminalSymbols.add(symbol);
+            symbols.add(symbol.toString());
+            nonTerminalSymbols.add(symbol.toString());
         }
 
         for (String s : productionRules) {
@@ -70,11 +67,11 @@ public class StateManager {
                         break;
                     // A space is encountered
                     case ' ':
-                        if (left != "" && symbol != "") {
+                        if (!left.equals("") && !symbol.equals("")) {
                             Symbol r = new Symbol(symbol, nonTerminalSymbols.contains(symbol));
                             right.add(r);
                             symbols.add(symbol);
-                            symbol = "";};
+                            symbol = "";}
                         break;
                     default:
                         symbol += c;
@@ -97,19 +94,18 @@ public class StateManager {
             if (!nonTerminalSymbols.contains(s))
                 terminalSymbols.add(s);
         }
-
-        return grammar;
     }
 
-
+    //Given a symbol returns the production rule with that symbol as the head
     public Set<ProdRule> getProdRule(Symbol sym) {
         return grammar.stream()
                 .filter(x -> x.left.equals(sym))
                 .collect(toCollection(HashSet::new));
     }
 
+    //returns the closure of a set of production rules
     public Set<ProdRule> closure(Set<ProdRule> items){
-        Stack<ProdRule> stack = new Stack();
+        Stack<ProdRule> stack = new Stack<>();
         Set<ProdRule> seen = new HashSet<>();
         for (ProdRule pr : items) {
             stack.add(pr);
@@ -138,7 +134,8 @@ public class StateManager {
         return closure(set);
     }
 
-    public Set<State> computeCanonicalCollection(){
+    //Computers the LR(0) canonical collection, i.e. the states that form the parsing state transition diagram, including the action and goto table.
+    public void computeCanonicalCollection(){
         Set<State> seen = new HashSet<>();
         Stack<State> C = new Stack<>();
         startState = new State(this, closure(startProdRule));
@@ -158,7 +155,7 @@ public class StateManager {
                     if (sym.equals("$") && state.acceptState)
                         actionTable.put(state,sym,new Action(Action.Move.ACCEPT, state));
                     else
-                    //reduce
+                    //reduce; resolve shift/reduce conflicts by prioritizing shifting.
                     if (t.isEmpty())
                         actionTable.put(state, sym, new Action(Action.Move.REDUCE, state));
                     else
@@ -182,9 +179,12 @@ public class StateManager {
             }
         }
         states = seen;
-        return seen;
     }
 
+    @Override
+    public String toString() {
+        return grammar.toString();
+    }
 
     @Override
     public boolean equals(Object obj) {

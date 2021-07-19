@@ -1,5 +1,3 @@
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,24 +52,6 @@ public class ParseTree {
         if (item.token != null && item.token.value != null)
             str = item.token.value.toString();
         return str;
-    }
-
-
-
-    public void print(int depth, PrintWriter pw){
-        for (int i = 0; i < depth; i ++)
-            pw.print("\t");
-        pw.println("[" + getSymbolString() + "]");
-        for (ParseTree child : children)
-            child.print(depth + 1, pw);
-    }
-
-    @Override
-    public String toString() {
-        StringWriter writer = new StringWriter();
-        PrintWriter pw = new PrintWriter(writer);
-        print(0, pw);
-        return writer.toString();
     }
 
     public String drawTree(){

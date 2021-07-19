@@ -10,6 +10,7 @@ public class Parser {
     BiMap<State, String, Action> actionTable;
     BiMap<State, String, State> gotoTable;
 
+    //
     Parser(String... productionRules){
         grammar = new StateManager(productionRules);
         actionTable = grammar.actionTable;
@@ -25,9 +26,7 @@ public class Parser {
         parseForest.add(startPT);
 
         while(true){
-
             Token token = null;
-
             ParseTree pt = parseForest.peek();
             State state = pt.state;
 
@@ -37,16 +36,15 @@ public class Parser {
 
             Action action = actionTable.get(state, symbol);
 
-            switch (action.move){
-                case REDUCE:
-                    reduce(state); break;
-                case SHIFT:
-                    shift(action.state, token); break;
-                case ACCEPT:
+            switch (action.move) {
+                case REDUCE -> reduce(state);
+                case SHIFT -> shift(action.state, token);
+                case ACCEPT -> {
                     reduce(state);
-                    return accept();
-                case ERROR:
-                     error(token); return null;
+                    return accept(); }
+                case ERROR -> {
+                    error(token);
+                    return null;  }
             }
         }
     }
@@ -72,9 +70,9 @@ public class Parser {
     private void error(Token token) throws SyntaxError {
         if (token != null) {
             String sym = token.symbol.symbol;
-            if (sym == "N")
+            if (sym.equals("N"))
                 sym = token.value.toString();
-            if (sym == "$")
+            if (sym.equals("$"))
                 throw new SyntaxError("Invalid syntax at end of file");
             throw new SyntaxError("Invalid syntax '" + sym + "' at position " + token.position);
         }

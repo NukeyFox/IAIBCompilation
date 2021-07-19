@@ -12,20 +12,20 @@ public class Token {
         this.position = position;
     }
 
+    //Associate each Token with a symbol
     public Symbol getSymbol(){
-        switch (type){
-            case PLUS: return new Symbol("+", false, this);
-            case MINUS: return new Symbol("-", false, this);
-            case STAR: return new Symbol("*", false, this);
-            case DOT: return new Symbol(".", false, this);
-            case BANG: return new Symbol("!", false, this);
-            case LEFT_BRACKET: return new Symbol("(", false, this);
-            case RIGHT_BRACKET: return new Symbol(")", false, this);
-            case COS: return new Symbol("cos", false, this);
-            case NUMBER: return new Symbol("N", false, this);
-            case EOF: return new Symbol("$", false, this);
-            default: return null;
-        }
+        return switch (type) {
+            case PLUS -> new Symbol("+", false, this);
+            case MINUS -> new Symbol("-", false, this);
+            case STAR -> new Symbol("*", false, this);
+            case DOT -> new Symbol(".", false, this);
+            case BANG -> new Symbol("!", false, this);
+            case LEFT_BRACKET -> new Symbol("(", false, this);
+            case RIGHT_BRACKET -> new Symbol(")", false, this);
+            case COS -> new Symbol("cos", false, this);
+            case NUMBER -> new Symbol("N", false, this);
+            case EOF -> new Symbol("$", false, this);
+        };
     }
 
     @Override

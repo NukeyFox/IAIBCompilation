@@ -3,6 +3,7 @@ public class Symbol {
     final boolean nonTerminal;
     final Token token;
 
+    //A data structure to store the symbol
     Symbol(String symbol,  boolean nonTerminal, Token token){
         this.symbol = symbol;
         this.nonTerminal = nonTerminal;
