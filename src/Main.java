@@ -81,8 +81,8 @@ public class Main {
         catch (SyntaxError pe){
             errorReport("Syntax Error: " +pe.getMessage());
         }
-        catch (MathsError pe){
-            errorReport("Maths Error: " +pe.getMessage());
+        catch (EvalError pe){
+            errorReport("Eval Error: " +pe.getMessage());
         }
     }
 

@@ -80,6 +80,8 @@ public class Lexer {
                 (c >= 'A' && c <= 'Z') ||
                 c == '_';
     }
+
+    //Checks if any keywords match the string
     private void checkForKeyword() throws SyntaxError {
         while (isAlpha(peek()))
             advance();
@@ -92,6 +94,7 @@ public class Lexer {
         addToken(type);
     }
 
+    //Main scanner
     List<Token> scanTokens(String source) throws SyntaxError {
         tokens = new ArrayList<>();
         start = 0;
@@ -102,12 +105,11 @@ public class Lexer {
             start = current;
             scanToken();
         }
-
         tokens.add(new Token(TokenType.EOF, null, source.length()));
-
         return tokens;
     }
 
+    //Scans individual tokens. If an unrecognised token is found then throw an error with information on where the error is.
     private void scanToken() throws SyntaxError {
         char c = advance();
         switch (c){
@@ -137,7 +139,6 @@ public class Lexer {
                     throw new SyntaxError("Unexpected token '" + token + "' at " + start);
                 }
                 break;
-
         }
     }
 

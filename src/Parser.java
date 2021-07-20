@@ -10,13 +10,14 @@ public class Parser {
     BiMap<State, String, Action> actionTable;
     BiMap<State, String, State> gotoTable;
 
-    //
+    //Given a set of production rules, create the action and goto tables
     Parser(String... productionRules){
         grammar = new StateManager(productionRules);
         actionTable = grammar.actionTable;
         gotoTable = grammar.gotoTable;
     }
 
+    //Use the LR parsing algorithm to
     public ParseTree parse(List<Token> tokens) throws SyntaxError {
         index = 0;
         source = tokens;
@@ -28,7 +29,7 @@ public class Parser {
         while(true){
             Token token = null;
             ParseTree pt = parseForest.peek();
-            State state = pt.state;
+            State state = pt.getState();
 
             if (index < tokens.size()){
                 token = peek();
@@ -49,24 +50,29 @@ public class Parser {
         }
     }
 
+    //peek the next token without consuming it
     public Token peek(){
         return source.get(index);
     }
 
+    //reduce
     public void reduce(State state){
         state.reduce(gotoTable, parseForest);
     }
 
+    //shift
     public void shift(State t, Token a){
 
         parseForest.add(new ParseTree(t, a));
         index++;
     }
 
+    //accept -- returns the parse tree
     public ParseTree accept() {
             return parseForest.pop();
     }
 
+    //when the tokens are ungrammatical, throw a syntax error
     private void error(Token token) throws SyntaxError {
         if (token != null) {
             String sym = token.symbol.symbol;

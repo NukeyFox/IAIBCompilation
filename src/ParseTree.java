@@ -3,31 +3,27 @@ import java.util.stream.Collectors;
 
 public class ParseTree {
 
-    public State state;
+    private final Symbol item;
+    private final State state;
 
+    public State getState() {return state;}
     public Symbol getItem() {
         return item;
     }
     public boolean operator(){
         return children.size() > 1;
     }
-
-
-    private final Symbol item;
-
     public ParseTree getChild(int i) {
         return children.get(i);
     }
 
     private List<ParseTree> children;
-    int depth;
     int subtreeWidth;
 
     public ParseTree(State t, Symbol a) {
         state = t;
         item = a;
         children = new ArrayList<>();
-        depth = 0;
         subtreeWidth = -1;
     }
 
@@ -40,20 +36,21 @@ public class ParseTree {
     }
 
     public static ParseTree makeParent(ParseTree parent, List<ParseTree> children) {
-        for (ParseTree pr : children)
-            pr.depth += 1;
         parent.children = children;
         return parent;
     }
 
-    public String getSymbolString(){
+    /// From here onwards is for drawing the parse tree ///
 
+    //Get the symbol to draw
+    public String getSymbolString(){
         String str = item.toString();
         if (item.token != null && item.token.value != null)
             str = item.token.value.toString();
         return str;
     }
 
+    //Draw the tree recursively
     public String drawTree(){
         String sym = getSymbolString();
 
@@ -76,6 +73,7 @@ public class ParseTree {
     }
 
 
+    //draw all childrens side y side
     private String mergeChildren() {
         String out = "";
         for (ParseTree child : children)
@@ -83,6 +81,7 @@ public class ParseTree {
         return out;
     }
 
+    //Draw two string of trees side by side
     private String mergeTreeStrings(String t1, String t2){
         if (t1.isEmpty())
             return t2;
@@ -112,6 +111,7 @@ public class ParseTree {
         return sb.toString();
     }
 
+    //get the width of the string
     private int width(List<String> string) {
         return string.stream().mapToInt(String::length).max().getAsInt();
     }

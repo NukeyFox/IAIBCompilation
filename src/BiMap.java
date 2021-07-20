@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
+//A map that is keyed by a pair
 public class BiMap<T, U, V> {
     Map<T, Map<U,V>> map;
 

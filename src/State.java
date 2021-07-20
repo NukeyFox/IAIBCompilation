@@ -26,7 +26,6 @@ public class State {
                 cases = x.dotLast();
                 if (cases) {
                     reducingPR = x;
-                    Symbol reducingSymbol = reducingPR.lastSymbol();
                     break;
                 }
             }
@@ -52,7 +51,7 @@ public class State {
             }
 
             //add the reduced state and symbol
-            State nextState = gotoTable.get(parseForest.peek().state, head.symbol);
+            State nextState = gotoTable.get(parseForest.peek().getState(), head.symbol);
             ParseTree pt = ParseTree.makeParent(nextState, head, children);
             parseForest.add(pt);
 

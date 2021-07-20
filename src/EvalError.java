@@ -1,6 +1,6 @@
-public class MathsError extends Exception{
+public class EvalError extends Exception{
     private String message;
-    MathsError(String message){
+    EvalError(String message){
         this.message = message;
     }
 

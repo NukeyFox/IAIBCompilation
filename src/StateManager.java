@@ -128,6 +128,7 @@ public class StateManager {
         return seen;
     }
 
+    //closure but for a single product rule
     public Set<ProdRule> closure(ProdRule item){
         Set<ProdRule> set = new HashSet<>();
         set.add(item);
